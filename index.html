@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Font Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f4f7fa;
+            --text-main: #343a40;
+            --text-secondary: #6c757d;
+            --card-bg: #ffffff;
+            --primary-color: #4e73df;
+            --success-color: #1cc88a;
+            --danger-color: #e74a3b;
+            --warning-color: #f6c23e;
+            --labor-color: #fd7e14;
+            --info-color: #36b9cc;
+            --border-radius: 16px;
+            --soft-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.95rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-bottom: none;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .navbar-brand { 
+            font-weight: 700; 
+            color: var(--primary-color) !important; 
+            font-size: 1.4rem;
+            cursor: pointer; 
+            transition: opacity 0.2s; 
+        }
+        .navbar-brand:hover { opacity: 0.8; }
+        .navbar-brand i { margin-right: 8px; }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Summary Cards Styles */
+        .stat-card {
+            overflow: hidden;
+            position: relative;
+        }
+        .stat-card:hover { 
+            transform: translateY(-5px); 
+        }
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+        .stat-card.income::before { background-color: var(--success-color); }
+        .stat-card.expense::before { background-color: var(--danger-color); }
+        .stat-card.profit::before { background-color: var(--primary-color); }
+        .stat-card.tax::before { background-color: var(--warning-color); }
+        .stat-card.doc-pending::before { background-color: var(--info-color); }
+
+        .stat-value { 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            margin-bottom: 0.2rem; 
+        }
+        .stat-label { 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            color: #b0b0b0; 
+            letter-spacing: 0.5px;
+        }
+
+        .table { margin-bottom: 0; }
+        .table thead th {
+            border-bottom: 2px solid #f0f0f0;
+            color: #858796;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background-color: #fdfdfe;
+            text-transform: uppercase;
+            padding: 1rem;
+            border-top: none;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            color: var(--text-main);
+            border-bottom: 1px solid #f8f9fc;
+            padding: 1rem;
+        }
+        .table-hover tbody tr:hover { background-color: #f8f9fc; }
+        
+        .btn {
+            border-radius: 50px;
+            font-weight: 500;
+            padding: 0.4rem 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+        
+        .btn-status-toggle { 
+            border: 1px solid #e3e6f0; 
+            background: white; 
+            color: #858796; 
+            border-radius: 50px; 
+            padding: 4px 12px; 
+            font-size: 0.8rem; 
+            transition: all 0.2s; 
+            min-width: 90px; 
+            font-weight: 600;
+        }
+        .btn-status-toggle.doc-received { border-color: var(--success-color); background-color: rgba(28, 200, 138, 0.1); color: var(--success-color); }
+        .btn-status-toggle.vat-active { border-color: var(--warning-color); background-color: rgba(246, 194, 62, 0.1); color: #d6a100; }
+        .btn-status-toggle:hover { transform: scale(1.05); cursor: pointer; }
+
+        .btn-filter { 
+            border: 1px solid #e3e6f0; 
+            color: #858796; 
+            background-color: #fff; 
+            font-size: 0.9rem; 
+            padding: 0.4rem 1rem; 
+            margin-bottom: 5px; 
+            border-radius: 50px; 
+            transition: all 0.2s; 
+        }
+        .btn-filter:hover { background-color: #eaecf4; }
+        .btn-filter.active { 
+            background-color: var(--primary-color); 
+            color: #fff; 
+            border-color: var(--primary-color); 
+            box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #d1d3e2;
+            padding: 0.7rem 1rem;
+            transition: all 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .text-income { color: var(--success-color) !important; font-weight: 700; }
+        .text-expense { color: var(--danger-color) !important; font-weight: 700; }
+        .text-labor { color: var(--labor-color) !important; font-weight: 700; }
+
+        .badge-wht { 
+            background-color: rgba(253, 126, 20, 0.1); 
+            color: var(--labor-color); 
+            border: 1px solid var(--labor-color); 
+            font-size: 0.75rem; 
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 255, 255, 0.85); 
+            z-index: 9999; 
+            display: flex; justify-content: center; align-items: center; flex-direction: column; 
+            backdrop-filter: blur(5px);
+        }
+        
+        /* =========================================
+           PRINT OPTIMIZATION CSS (UPDATED V3)
+           ========================================= */
+        @media print {
+            @page { 
+                size: A4 portrait; 
+                margin: 10mm;
+            }
+
+            body { 
+                background-color: white !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+                font-size: 10pt;
+            }
+
+            /* Hide UI Elements */
+            .navbar, .btn, .input-group, .loading-overlay, 
+            #globalSearchCard, #filterSection, #summarySheetFilterSection, 
+            #filterSummaryBar, .no-print, .form-check-input, .card-header { 
+                display: none !important; 
+            }
+
+            /* Hide Specific Columns by CLASS */
+            .col-checkbox, .col-manage {
+                display: none !important;
+            }
+
+            /* Container Reset */
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* Card Reset */
+            .card { 
+                border: none !important; 
+                box-shadow: none !important; 
+                margin-bottom: 0 !important;
+            }
+            .card-body {
+                padding: 0 !important;
+            }
+
+            /* Header Section */
+            #printHeader { 
+                display: block !important; 
+                text-align: center; 
+                margin-bottom: 20px; 
+                padding-bottom: 10px; 
+                border-bottom: 2px solid #000; 
+                color: #000 !important; 
+            }
+            #printSheetName { font-weight: bold; color: #000; font-size: 1.5em; }
+
+            /* ===================================
+               Summary Layout Fix (Equal Size 2x2)
+               =================================== */
+            #summarySection {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: flex-start !important;
+                gap: 10px !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Reset all columns inside summary */
+            #summarySection > div {
+                width: auto !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+
+            /* Force 2-Column Grid for the 4 remaining items */
+            #summarySection > div:nth-child(1), /* Income */
+            #summarySection > div:nth-child(2), /* Expense */
+            #summarySection > div:nth-child(3), /* Profit */
+            #summarySection > div:nth-child(4)  /* Tax */
+            {
+                flex: 0 0 48% !important; /* ~Half width each */
+                width: 48% !important;
+                margin-bottom: 10px !important;
+            }
+
+            /* Hide Document Status (5th child) in Print */
+            #summarySection > div:nth-child(5) {
+                display: none !important;
+            }
+
+            .stat-card { 
+                border: 1px solid #000 !important; 
+                box-shadow: none !important; 
+                background: white !important;
+                page-break-inside: avoid;
+                margin-bottom: 0 !important;
+                height: 100% !important;
+                min-height: 100px; /* Ensure uniform height perception */
+            }
+            
+            .stat-card::before { display: none !important; } 
+            
+            .stat-card .card-body {
+                padding: 10px 15px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .stat-value { 
+                font-size: 14pt !important;
+                color: #000 !important;
+                white-space: nowrap; 
+            }
+            .stat-label {
+                color: #333 !important;
+                font-weight: bold;
+                font-size: 10pt;
+                margin-bottom: 5px;
+            }
+
+            /* Table Styles */
+            .table-responsive { overflow: visible !important; } 
+            
+            .table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin-top: 10px;
+                table-layout: fixed; 
+            }
+            
+            .table th {
+                background-color: #f0f0f0 !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+                padding: 4px !important;
+                font-size: 8pt !important;
+                vertical-align: middle !important;
+            }
+            
+            .table td { 
+                border: 1px solid #000 !important; 
+                padding: 4px !important; 
+                color: #000 !important; 
+                font-size: 8pt !important; 
+                vertical-align: middle !important; 
+                word-wrap: break-word;
+            }
+            
+            /* Status Buttons in Table */
+            .btn-status-toggle {
+                border: none !important;
+                background: none !important;
+                padding: 0 !important;
+                color: #000 !important;
+                font-size: 8pt !important;
+                font-weight: normal !important;
+                min-width: auto !important;
+            }
+            .badge {
+                border: none;
+                color: #000 !important;
+                background: none !important;
+                padding: 0;
+                font-size: 8pt;
+            }
+        }
+
+        #printHeader, #printSignature { display: none; }
+    </style>
+    <title>ระบบบัญชี (Real)</title>
+</head>
+<body>
+
+    <div id="loading" class="loading-overlay">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+        <h5 class="text-secondary fw-light">กำลังโหลดข้อมูล...</h5>
+    </div>
+
+    <!-- Print Header -->
+    <div id="printHeader">
+        <h3 class="fw-bold">รายงานระบบบัญชี</h3>
+        <p class="mb-0">หน้า: <span id="printSheetName"></span> | วันที่พิมพ์: <span id="printDate"></span></p>
+    </div>
+
+    <!-- Modern Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="event.preventDefault(); goToSummary();" title="กลับไปหน้าสรุปภาพรวม">
+                <i class="bi bi-wallet2 text-primary me-2"></i>ระบบบัญชี
+            </a>
+            
+            <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+                <div class="input-group" style="width: auto; min-width: 200px;">
+                    <span class="input-group-text bg-light border-end-0 border rounded-start-pill"><i class="bi bi-book text-secondary"></i></span>
+                    <select id="sheetSelector" class="form-select border-start-0 rounded-end-pill bg-light fw-bold" onchange="changeSheet()">
+                        <option value="Data">กำลังโหลด...</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group shadow-sm rounded-pill" role="group">
+                    <button id="btnManageSheets" class="btn btn-light border" onclick="openSheetManager()" title="จัดการหน้า">
+                        <i class="bi bi-gear-fill text-secondary"></i>
+                    </button>
+                    <button id="btnRename" class="btn btn-light border" onclick="renameCurrentSheet()" title="เปลี่ยนชื่อ">
+                        <i class="bi bi-pencil text-secondary"></i>
+                    </button>
+                    <button id="btnCopySheet" class="btn btn-light border" onclick="duplicateCurrentSheet()" title="คัดลอกหน้า">
+                        <i class="bi bi-files text-info"></i>
+                    </button>
+                    <button id="btnAddSheet" class="btn btn-light border" onclick="addNewSheet()" title="เพิ่มหน้าใหม่">
+                        <i class="bi bi-plus-circle text-primary"></i>
+                    </button>
+                    <button id="btnDeleteSheet" class="btn btn-light border" onclick="deleteCurrentSheet()" title="ลบหน้า">
+                        <i class="bi bi-trash text-danger"></i>
+                    </button>
+                </div>
+                
+                <button id="btnPrint" class="btn btn-light border shadow-sm rounded-circle ms-2" onclick="updatePrintInfo(); window.print()" title="พิมพ์">
+                    <i class="bi bi-printer text-dark"></i>
+                </button>
+                
+                <button id="btnNewItem" class="btn btn-primary shadow-sm rounded-pill ms-2 px-4" onclick="openModal()">
+                    <i class="bi bi-plus-lg me-1"></i> รายการใหม่
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <!-- Dashboard Summary -->
+        <div class="row g-4 mb-4" id="summarySection">
+            <!-- 1. รายรับ -->
+            <div class="col-md-2 col-sm-6"><div class="card stat-card income h-100 mb-0 shadow-sm"><div class="card-body"><div class="stat-label text-success">รายรับรวม</div><div class="stat-value text-dark" id="sumIncome">0.00</div></div></div></div>
+            <!-- 2. รายจ่าย -->
+            <div class="col-md-2 col-sm-6"><div class="card stat-card expense h-100 mb-0 shadow-sm"><div class="card-body"><div class="stat-label text-danger">รายจ่าย</div><div class="stat-value text-dark" id="sumExpense">0.00</div></div></div></div>
+            <!-- 3. กำไร -->
+            <div class="col-md-2 col-sm-6"><div class="card stat-card profit h-100 mb-0 shadow-sm"><div class="card-body"><div class="stat-label text-primary">กำไรขั้นต้น</div><div class="stat-value" id="sumProfit">0.00</div></div></div></div>
+            <!-- 4. ภาษี -->
+            <div class="col-md-4 col-sm-6"><div class="card stat-card tax h-100 mb-0 shadow-sm"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-1"><div class="stat-label text-warning">ภาระภาษีรวม (นำส่ง)</div><small class="text-muted" style="font-size:0.7em">(VAT สุทธิ + WHT)</small></div><div class="stat-value text-dark" id="sumTotalTax">0.00</div><div class="d-flex justify-content-between mt-2 pt-2 border-top small text-secondary"><div class="me-3"><span>VAT สุทธิ:</span> <span id="sumNetVat" class="fw-bold text-dark">0.00</span> <span style="font-size:0.7em" class="text-muted">(ขาย:<span id="sumVatSell">0</span> | ซื้อ:<span id="sumVatBuy">0</span>)</span></div><div><span>WHT สะสม:</span> <span id="sumTotalWht" class="fw-bold text-labor">0.00</span></div></div></div></div></div>
+            <!-- 5. เอกสาร -->
+            <div class="col-md-2 col-sm-6"><div class="card stat-card doc-pending h-100 mb-0 shadow-sm"><div class="card-body"><div class="stat-label text-info">สถานะเอกสาร</div><div class="mt-3"><span class="badge bg-success bg-opacity-10 text-success w-100 mb-2 py-2" style="font-weight: 500;">รับแล้ว <span id="countDocReceived" class="fw-bold">0</span></span><span class="badge bg-secondary bg-opacity-10 text-secondary w-100 py-2" style="font-weight: 500;">รอรับ <span id="countDocPending" class="fw-bold">0</span></span></div></div></div></div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                <span class="h5 mb-0 text-primary"><i class="bi bi-list-ul me-2"></i><span id="listTitle">รายการเคลื่อนไหว</span> <span id="currentSheetLabel" class="text-muted small fw-normal ms-2"></span></span>
+            </div>
+            <div class="card-body p-4">
+                
+                <!-- Sheet Selector for Summary Mode -->
+                <div id="summarySheetFilterSection" class="mb-4 p-4 bg-light rounded-3 border-0" style="display:none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="fw-bold text-secondary fs-6"><i class="bi bi-layers-fill me-2"></i>เลือกหน้า (Sheet) ที่ต้องการสรุป:</span>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-white border shadow-sm text-secondary" onclick="toggleSummaryCheckboxes(false)">ล้าง</button>
+                                <button class="btn btn-white border shadow-sm text-secondary" onclick="toggleSummaryCheckboxes(true)">ทั้งหมด</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm px-4 shadow-sm" onclick="calculateCustomSummary()">
+                            <i class="bi bi-arrow-repeat me-1"></i> คำนวณสรุปใหม่
+                        </button>
+                    </div>
+                    <div id="summarySheetCheckboxes" class="d-flex flex-wrap gap-2 p-2 bg-white rounded border"></div>
+                </div>
+
+                <!-- Main Table Filters -->
+                <div id="filterSection" class="mb-4">
+                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                        <button id="btnBulkDelete" class="btn btn-danger btn-sm me-2 shadow-sm" style="display:none;" onclick="deleteSelectedItems()">
+                            <i class="bi bi-trash-fill"></i> ลบที่เลือก (<span id="selectedCount">0</span>)
+                        </button>
+                        
+                        <span class="text-muted fw-bold me-2"><i class="bi bi-funnel"></i> ตัวกรอง:</span>
+                        <button type="button" class="btn btn-filter active" id="btnFilterAll" onclick="filterData('all', this)">ทั้งหมด</button>
+                        <div class="vr mx-2 text-secondary align-self-center"></div>
+                        <button type="button" class="btn btn-filter" onclick="filterData('income', this)"><i class="bi bi-arrow-up-circle me-1 text-success"></i>รายรับ</button>
+                        <button type="button" class="btn btn-filter" onclick="filterData('expense', this)"><i class="bi bi-arrow-down-circle me-1 text-danger"></i>รายจ่าย</button>
+                        <button type="button" class="btn btn-filter" onclick="filterData('labor', this)"><i class="bi bi-person-gear me-1 text-warning"></i>ค่าแรง</button>
+                         <div class="vr mx-2 text-secondary align-self-center"></div>
+                        <button type="button" class="btn btn-filter" onclick="filterData('vat', this)">VAT</button>
+                        <button type="button" class="btn btn-filter" onclick="filterData('novat', this)">NO VAT</button>
+                         <div class="vr mx-2 text-secondary align-self-center"></div>
+                        <button type="button" class="btn btn-filter" onclick="filterData('doc_received', this)"><i class="bi bi-check-circle me-1"></i>รับแล้ว</button>
+                        <button type="button" class="btn btn-filter" onclick="filterData('doc_pending', this)"><i class="bi bi-clock me-1"></i>รอรับ</button>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white border-end-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="ค้นหาตามชื่อ, ยอดเงิน..." onkeyup="searchTable()">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" id="localStartDate" class="form-control shadow-sm" onchange="searchTable()" placeholder="ตั้งแต่วันที่">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" id="localEndDate" class="form-control shadow-sm" onchange="searchTable()" placeholder="ถึงวันที่">
+                        </div>
+                        <div class="col-md-1">
+                             <button class="btn btn-light border w-100 shadow-sm" onclick="clearLocalSearch()" title="ล้างค่า"><i class="bi bi-x-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="filterSummaryBar" class="alert alert-primary bg-opacity-10 border-0 d-flex justify-content-between align-items-center py-2 mb-3 rounded-3">
+                    <div class="d-flex align-items-center small"><i class="bi bi-funnel-fill text-primary me-2"></i><span class="fw-bold text-primary me-1">สรุปยอด (คัดกรอง):</span><span class="badge bg-primary rounded-pill" id="filterCount">0 รายการ</span></div>
+                    <div class="d-flex gap-3 text-end small"><span class="text-success fw-bold">รับ: <span id="filterIncome">0.00</span></span><span class="text-danger fw-bold">จ่าย: <span id="filterExpense">0.00</span></span></div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="dataTable">
+                        <thead class="bg-light" id="tableHeader"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Global Transactions Card -->
+        <div class="card mt-4 shadow border-0" id="globalSearchCard" style="display: none;">
+            <div class="card-header bg-white py-3">
+                <span class="text-primary h5"><i class="bi bi-search me-2"></i>รายการทั้งหมด (ค้นหาข้ามชีท)</span>
+            </div>
+            <div class="card-body p-4">
+                
+                <!-- NEW: Global Filter Section -->
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-4">
+                    <span class="text-muted fw-bold me-2"><i class="bi bi-funnel"></i> ตัวกรอง:</span>
+                    <button type="button" class="btn btn-filter active" id="btnGlobalFilterAll" onclick="filterGlobalData('all', this)">ทั้งหมด</button>
+                    <div class="vr mx-2 text-secondary align-self-center"></div>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('income', this)"><i class="bi bi-arrow-up-circle me-1 text-success"></i>รายรับ</button>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('expense', this)"><i class="bi bi-arrow-down-circle me-1 text-danger"></i>รายจ่าย</button>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('labor', this)"><i class="bi bi-person-gear me-1 text-warning"></i>ค่าแรง</button>
+                     <div class="vr mx-2 text-secondary align-self-center"></div>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('vat', this)">VAT</button>
+                    <button type="button" class="btn btn-filter" onclick="filterData('novat', this)">NO VAT</button>
+                     <div class="vr mx-2 text-secondary align-self-center"></div>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('doc_received', this)"><i class="bi bi-check-circle me-1"></i>รับแล้ว</button>
+                    <button type="button" class="btn btn-filter" onclick="filterGlobalData('doc_pending', this)"><i class="bi bi-clock me-1"></i>รอรับ</button>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-5">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="globalSearchInput" class="form-control border-start-0" placeholder="พิมพ์เพื่อค้นหา..." onkeyup="searchGlobalTable()">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" id="globalStartDate" class="form-control shadow-sm" onchange="searchGlobalTable()" placeholder="ตั้งแต่วันที่">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" id="globalEndDate" class="form-control shadow-sm" onchange="searchGlobalTable()" placeholder="ถึงวันที่">
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-light border w-100 shadow-sm" onclick="clearGlobalSearch()" title="ล้างค่า"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                </div>
+                <div class="table-responsive rounded-3 border" style="max-height: 500px; overflow-y: auto;">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="ps-4">ชีท (ที่อยู่)</th>
+                                <th>วันที่</th>
+                                <th>รายการ</th>
+                                <th class="text-end">ยอดเงิน</th>
+                                <th class="text-center pe-4" style="width: 60px;">ไป</th>
+                            </tr>
+                        </thead>
+                        <tbody id="globalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modals -->
+    <!-- Move Item Modal -->
+    <div class="modal fade" id="moveItemModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-bottom-0"><h5 class="modal-title fw-bold">ย้ายรายการ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted">ต้องการย้ายรายการนี้ไปยังหน้าไหน?</p><input type="hidden" id="moveItemId"><select class="form-select form-select-lg" id="targetSheetSelector"></select></div><div class="modal-footer border-top-0"><button type="button" class="btn btn-light" data-bs-dismiss="modal">ยกเลิก</button><button type="button" class="btn btn-primary px-4" onclick="confirmMoveItem()">ย้ายรายการ</button></div></div></div></div>
+
+    <!-- Sheet Manager Modal -->
+    <div class="modal fade" id="sheetManagerModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-bottom-0"><h5 class="modal-title fw-bold">จัดการหน้า (Sheet Manager)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-info border-0 d-flex align-items-center mb-3"><i class="bi bi-info-circle-fill me-2"></i><small>ลากขึ้น-ลง หรือกดลูกศรเพื่อจัดลำดับหน้า (มีผลทันทีหลังกดบันทึก)</small></div><div class="list-group shadow-sm" id="sheetListContainer" style="max-height: 400px; overflow-y: auto;"></div></div><div class="modal-footer border-top-0 justify-content-between"><div><button type="button" class="btn btn-outline-danger btn-sm me-2" onclick="confirmBulkDelete()"><i class="bi bi-trash"></i> ลบที่เลือก</button><button type="button" class="btn btn-outline-primary btn-sm" onclick="confirmBulkCopy()"><i class="bi bi-files"></i> คัดลอกที่เลือก</button></div><div><button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">ปิด</button><button type="button" class="btn btn-success px-4" onclick="saveReorder()"><i class="bi bi-check-lg"></i> บันทึกลำดับ</button></div></div></div></div></div>
+
+    <!-- Entry Modal -->
+    <div class="modal fade" id="entryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-primary text-white border-0"><h5 class="modal-title fw-bold" id="modalTitle">บันทึกรายการ</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><form id="recordForm" onsubmit="handleFormSubmit(event)"><input type="hidden" name="recId" id="recId"><input type="hidden" name="sheetName" id="sheetNameInput"><div class="row mb-3"><div class="col-md-6"><label class="form-label text-muted small fw-bold">วันที่</label><input type="date" class="form-control" name="date" required id="dateInput"></div><div class="col-md-6"><label class="form-label text-muted small fw-bold">ประเภท</label><div class="btn-group w-100 shadow-sm" role="group"><input type="radio" class="btn-check" name="type" id="typeIncome" value="รายรับ" onchange="toggleWhtOption()" checked><label class="btn btn-outline-success" for="typeIncome">รายรับ</label><input type="radio" class="btn-check" name="type" id="typeExpense" value="รายจ่าย" onchange="toggleWhtOption()"><label class="btn btn-outline-danger" for="typeExpense">รายจ่าย</label><input type="radio" class="btn-check" name="type" id="typeLabor" value="ค่าแรง" onchange="toggleWhtOption()"><label class="btn btn-outline-warning text-dark" for="typeLabor">ค่าแรง</label></div></div></div><div class="mb-3"><label class="form-label text-muted small fw-bold">ชื่อรายการ</label><input type="text" class="form-control" name="item" required id="itemInput" placeholder="เช่น ค่าจ้างนาย ก, ซื้อวัสดุ"></div><div class="mb-3"><label class="form-label text-muted small fw-bold">ลูกค้า / ร้านค้า / พนักงาน</label><input type="text" class="form-control" name="customer" id="customerInput" placeholder="ระบุชื่อ..."></div><div class="row mb-3"><div class="col-7"><label class="form-label text-muted small fw-bold">ยอดเงินเต็ม (Gross)</label><input type="number" step="0.01" class="form-control fw-bold fs-5 text-primary" name="amount" required id="amountInput" placeholder="0.00" oninput="calculateWhtPreview()"></div><div class="col-5"><label class="form-label text-muted small fw-bold">ภาษีมูลค่าเพิ่ม</label><select class="form-select" name="vatType" id="vatTypeInput"><option value="novat">ไม่มี VAT</option><option value="include">รวม VAT</option><option value="exclude">แยก VAT</option></select></div></div><div id="whtSection" class="mb-3 d-none"><div class="p-3 bg-warning bg-opacity-10 rounded-3 border border-warning"><div class="form-check"><input class="form-check-input" type="checkbox" id="hasWhtInput" name="hasWht" onchange="calculateWhtPreview()"><label class="form-check-label fw-bold text-dark" for="hasWhtInput">หัก ณ ที่จ่าย 3%</label></div><div id="whtPreview" class="mt-2 pt-2 border-top border-warning border-opacity-25 text-muted small d-none"><div class="d-flex justify-content-between"><span>ยอดหัก (3%):</span><span class="fw-bold text-danger" id="previewWhtAmount">0.00</span></div><div class="d-flex justify-content-between mt-1"><span>ยอดจ่ายจริง (Net):</span><span class="fw-bold text-success" id="previewNetPay">0.00</span></div></div></div></div><div class="mb-3"><label class="form-label text-muted small fw-bold">หมายเหตุ (ถ้ามี)</label><textarea class="form-control" name="remark" id="remarkInput" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea></div><div class="mb-4"><div class="form-check form-switch p-3 bg-light rounded-3 border"><input class="form-check-input ms-1" type="checkbox" id="hasDocInput" name="hasDoc"><label class="form-check-label fw-bold ms-2" for="hasDocInput"><i class="bi bi-file-earmark-check text-success"></i> ได้รับเอกสาร/ใบกำกับภาษีฉบับจริงแล้ว</label></div></div><div class="d-grid"><button type="submit" class="btn btn-primary py-2 rounded-pill fw-bold shadow-sm"><i class="bi bi-save me-1"></i> บันทึกข้อมูล</button></div></form></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================
+        // VERCEL ADAPTER FOR GOOGLE APPS SCRIPT API
+        // ============================================
+
+        // 🚨 สำคัญ: วาง URL ที่ได้จากขั้นตอนที่ 1 ลงตรงนี้ 🚨
+        const API_URL = "วาง_URL_จาก_ขั้นตอนที่_2_ตรงนี้"; 
+
+        var google = {
+            script: {
+                run: {
+                    withSuccessHandler: function(onSuccess) {
+                        return new Proxy({}, {
+                            get: function(target, prop) {
+                                return function(...args) {
+                                    const finalArgs = args.map(arg => {
+                                        if (arg instanceof HTMLFormElement) {
+                                            const fd = new FormData(arg);
+                                            const obj = {};
+                                            fd.forEach((v, k) => obj[k] = v);
+                                            return obj;
+                                        }
+                                        return arg;
+                                    });
+                                    
+                                    fetch(API_URL, { 
+                                        redirect: "follow", 
+                                        method: "POST", 
+                                        body: JSON.stringify({ functionName: prop, args: finalArgs }),
+                                        headers: { "Content-Type": "text/plain;charset=utf-8" }
+                                    })
+                                    .then(r => r.json())
+                                    .then(data => {
+                                        if(data.status === 'success') {
+                                            onSuccess(data.result);
+                                        } else {
+                                            alert('Error: ' + data.message);
+                                            document.getElementById('loading').style.display = 'none';
+                                        }
+                                    })
+                                    .catch(err => {
+                                        alert('Connection Error: ' + err);
+                                        document.getElementById('loading').style.display = 'none';
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        };
+
+        // ============================================
+        // END VERCEL ADAPTER
+        // ============================================
+
+        let allRecords = [];
+        let breakdownData = [];
+        let globalAllRecords = [];
+        let activeFilters = { types: [], tax: [], doc: [] };
+        let globalActiveFilters = { types: [], tax: [], doc: [] }; 
+        let currentSheetName = '__SUMMARY__'; // Default to summary
+        let isSummaryMode = false;
+        let allSheetNames = []; 
+
+        window.onload = function() {
+            if(API_URL.includes("วาง_URL")) {
+                alert("กรุณาใส่ API URL ในบรรทัดที่ 461 ก่อนใช้งาน");
+                return;
+            }
+            loadSheets();
+            document.getElementById('dateInput').valueAsDate = new Date();
+        };
+
+        // --- Global Search & Clear Functions ---
+        function searchGlobalTable() {
+            const searchText = document.getElementById('globalSearchInput').value.toLowerCase();
+            const startDateStr = document.getElementById('globalStartDate').value;
+            const endDateStr = document.getElementById('globalEndDate').value;
+
+            const filtered = globalAllRecords.filter(function(rec) {
+                // Text Search
+                const textMatch = (rec.item + rec.customer + rec.amount + rec.sheetName + (rec.remark||"")).toLowerCase().includes(searchText);
+
+                // Date Search 
+                let dateMatch = true;
+                if (startDateStr && rec.date < startDateStr) dateMatch = false;
+                if (endDateStr && rec.date > endDateStr) dateMatch = false;
+                
+                // Multi-Filter Logic (Global)
+                if (globalActiveFilters.types.length > 0) {
+                    let typeKey = '';
+                    if (rec.type === 'รายรับ') typeKey = 'income';
+                    else if (rec.type === 'รายจ่าย') typeKey = 'expense';
+                    else if (rec.type === 'ค่าแรง') typeKey = 'labor';
+                    if (!globalActiveFilters.types.includes(typeKey)) return false;
+                }
+                if (globalActiveFilters.tax.length > 0) {
+                    let taxKey = (rec.vatType === 'novat') ? 'novat' : 'vat';
+                    if (!globalActiveFilters.tax.includes(taxKey)) return false;
+                }
+                if (globalActiveFilters.doc.length > 0) {
+                    let docKey = rec.hasDoc ? 'doc_received' : 'doc_pending';
+                    if (!globalActiveFilters.doc.includes(docKey)) return false;
+                }
+
+                return textMatch && dateMatch;
+            });
+            renderGlobalTransactions(filtered);
+        }
+
+        function clearGlobalSearch() {
+            document.getElementById('globalSearchInput').value = '';
+            document.getElementById('globalStartDate').value = '';
+            document.getElementById('globalEndDate').value = '';
+            // Reset filters logic if needed, but usually keep filters
+            searchGlobalTable();
+        }
+        
+        // --- Updated Local Search for Single Sheet ---
+        function searchTable() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const startDateStr = document.getElementById('localStartDate').value;
+            const endDateStr = document.getElementById('localEndDate').value;
+
+            let filtered = allRecords.filter(function(rec) {
+                const text = (rec.item + rec.customer + rec.amount + (rec.remark || '')).toLowerCase();
+                const textMatch = text.includes(searchText);
+
+                let dateMatch = true;
+                if (startDateStr && rec.date < startDateStr) dateMatch = false;
+                if (endDateStr && rec.date > endDateStr) dateMatch = false;
+
+                if (!textMatch || !dateMatch) return false;
+
+                if (activeFilters.types.length > 0) {
+                    let typeKey = '';
+                    if(rec.type === 'รายรับ') typeKey = 'income'; else if(rec.type === 'รายจ่าย') typeKey = 'expense'; else if(rec.type === 'ค่าแรง') typeKey = 'labor';
+                    if(!activeFilters.types.includes(typeKey)) return false;
+                }
+                if (activeFilters.tax.length > 0) {
+                    let taxKey = (rec.vatType === 'novat') ? 'novat' : 'vat';
+                    if(!activeFilters.tax.includes(taxKey)) return false;
+                }
+                if (activeFilters.doc.length > 0) {
+                    let docKey = rec.hasDoc ? 'doc_received' : 'doc_pending';
+                    if(!activeFilters.doc.includes(docKey)) return false;
+                }
+                return true;
+            });
+
+            // Filter Summary Calc
+            let filterIn = 0; let filterEx = 0;
+            filtered.forEach(function(r) { if (r.type === 'รายรับ') filterIn += r.amount; else filterEx += r.amount; });
+            document.getElementById('filterCount').innerText = filtered.length + ' รายการ';
+            document.getElementById('filterIncome').innerText = formatMoney(filterIn);
+            document.getElementById('filterExpense').innerText = formatMoney(filterEx);
+            
+            updateDeleteButtonState();
+            
+            if (filtered.length === 0) {
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="text-center py-5 text-muted">ไม่พบข้อมูลตามเงื่อนไข</td></tr>';
+                return;
+            }
+            renderFilteredTable(filtered);
+        }
+
+        function clearLocalSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('localStartDate').value = '';
+            document.getElementById('localEndDate').value = '';
+            searchTable();
+        }
+
+        // --- Core Functions ---
+        function loadSheets() {
+            google.script.run.withSuccessHandler(function(names) {
+                allSheetNames = names;
+                const selector = document.getElementById('sheetSelector');
+                selector.innerHTML = '';
+                
+                let optSummary = document.createElement('option');
+                optSummary.value = '__SUMMARY__';
+                optSummary.text = '📊 สรุปการดำเนินการ (ภาพรวม)';
+                optSummary.style.fontWeight = 'bold';
+                optSummary.style.color = '#20a8d8';
+                selector.add(optSummary);
+
+                let optSep = document.createElement('option');
+                optSep.disabled = true;
+                optSep.text = '──────────────';
+                selector.add(optSep);
+
+                names.forEach(function(name) {
+                    let option = document.createElement('option');
+                    option.value = name;
+                    option.text = name;
+                    selector.add(option);
+                });
+                
+                if(currentSheetName && currentSheetName !== '__SUMMARY__') {
+                     let exists = Array.from(selector.options).some(function(o) { return o.value === currentSheetName; });
+                     if(exists) selector.value = currentSheetName;
+                     else selector.value = '__SUMMARY__';
+                } else if (currentSheetName === '__SUMMARY__') {
+                    selector.value = '__SUMMARY__';
+                } else {
+                     if(names.length > 0) selector.value = names[0];
+                }
+                
+                changeSheet();
+            }).getSheetNames();
+        }
+
+        // เพิ่มฟังก์ชันอัปเดตข้อมูลการพิมพ์โดยเฉพาะ
+        function updatePrintInfo() {
+            const selector = document.getElementById('sheetSelector');
+            const sheetName = selector.value;
+            const displaySheetName = (sheetName === '__SUMMARY__') ? "สรุปผลการดำเนินการ (ภาพรวม)" : sheetName;
+            
+            // อัปเดตส่วนหัวสำหรับพิมพ์
+            const printSheetNameEl = document.getElementById('printSheetName');
+            if (printSheetNameEl) printSheetNameEl.innerText = displaySheetName;
+            
+            const printDateEl = document.getElementById('printDate');
+            if (printDateEl) printDateEl.innerText = new Date().toLocaleDateString('th-TH');
+            
+            // อัปเดต Title ของ Browser (เผื่อพิมพ์ติด Header ของ Browser)
+            document.title = "ระบบบัญชี - " + displaySheetName;
+        }
+
+        function changeSheet() {
+            const selector = document.getElementById('sheetSelector');
+            currentSheetName = selector.value;
+            
+            updatePrintInfo();
+            
+            document.getElementById('btnBulkDelete').style.display = 'none';
+            document.getElementById('selectedCount').innerText = '0';
+
+            if (currentSheetName === '__SUMMARY__') {
+                isSummaryMode = true;
+                document.getElementById('btnAddSheet').style.display = 'none';
+                document.getElementById('btnRename').style.display = 'none';
+                document.getElementById('btnCopySheet').style.display = 'none';
+                document.getElementById('btnDeleteSheet').style.display = 'none';
+                document.getElementById('btnNewItem').style.display = 'none';
+                document.getElementById('filterSection').style.display = 'none';
+                document.getElementById('filterSummaryBar').style.setProperty('display', 'none', 'important');
+                
+                document.getElementById('summarySheetFilterSection').style.display = 'block';
+                document.getElementById('globalSearchCard').style.display = 'block';
+                renderSummaryFilters(); 
+                
+                document.getElementById('listTitle').innerText = 'สรุปยอดแยกรายหน้า';
+                document.getElementById('currentSheetLabel').innerText = '';
+                
+                loadOverallSummary();
+            } else {
+                isSummaryMode = false;
+                document.getElementById('btnAddSheet').style.display = 'inline-block';
+                document.getElementById('btnRename').style.display = 'inline-block';
+                document.getElementById('btnCopySheet').style.display = 'inline-block';
+                document.getElementById('btnDeleteSheet').style.display = 'inline-block';
+                document.getElementById('btnNewItem').style.display = 'inline-block';
+                document.getElementById('filterSection').style.display = 'block'; 
+                document.getElementById('filterSummaryBar').style.removeProperty('display');
+                
+                document.getElementById('summarySheetFilterSection').style.display = 'none';
+                document.getElementById('globalSearchCard').style.display = 'none';
+                
+                document.getElementById('listTitle').innerText = 'รายการเคลื่อนไหว';
+                
+                renderTable();
+                
+                loadData();
+            }
+        }
+
+        function loadData() {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('currentSheetLabel').innerText = `(หน้า: ${currentSheetName})`;
+            google.script.run.withSuccessHandler(onSuccess).getData(currentSheetName);
+        }
+
+        function loadOverallSummary() {
+            document.getElementById('loading').style.display = 'flex';
+            google.script.run.withSuccessHandler(onSuccessSummary).getOverallSummary();
+        }
+
+        function onSuccess(data) {
+            document.getElementById('loading').style.display = 'none';
+            allRecords = data.records;
+            renderSummary(data.summary);
+            searchTable(); 
+        }
+
+        function onSuccessSummary(data) {
+            document.getElementById('loading').style.display = 'none';
+            breakdownData = data.breakdown;
+            globalAllRecords = data.allTransactions; 
+            renderSummary(data.summary);
+            renderBreakdownTable();
+            searchGlobalTable(); 
+        }
+
+        // --- Sheet Management Functions ---
+        function addNewSheet() {
+            let name = prompt("ตั้งชื่อหน้าใหม่:");
+            if (name) {
+                document.getElementById('loading').style.display = 'flex';
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { currentSheetName = res.sheetName; loadSheets(); }
+                    else { alert(res.message); document.getElementById('loading').style.display = 'none'; }
+                }).createNewSheet(name);
+            }
+        }
+        function renameCurrentSheet() {
+            let newName = prompt("เปลี่ยนชื่อหน้าเป็น:", currentSheetName);
+            if (newName && newName !== currentSheetName) {
+                document.getElementById('loading').style.display = 'flex';
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { currentSheetName = res.newName; loadSheets(); }
+                    else { alert(res.message); document.getElementById('loading').style.display = 'none'; }
+                }).renameSheet(currentSheetName, newName);
+            }
+        }
+        function duplicateCurrentSheet() {
+            let newName = prompt("ตั้งชื่อหน้าใหม่:", "Copy of " + currentSheetName);
+            if (newName) {
+                document.getElementById('loading').style.display = 'flex';
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { currentSheetName = res.sheetName; loadSheets(); }
+                    else { alert(res.message); document.getElementById('loading').style.display = 'none'; }
+                }).duplicateSheet(currentSheetName, newName);
+            }
+        }
+        function deleteCurrentSheet() {
+            if(confirm('คุณแน่ใจหรือไม่ที่จะลบหน้านี้?')) {
+                document.getElementById('loading').style.display = 'flex';
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { alert('ลบเรียบร้อย'); currentSheetName = ''; loadSheets(); }
+                    else { alert(res.message); document.getElementById('loading').style.display = 'none'; }
+                }).deleteSheet(currentSheetName);
+            }
+        }
+        
+        function openSheetManager() {
+            const listContainer = document.getElementById('sheetListContainer');
+            listContainer.innerHTML = '';
+            
+            allSheetNames.forEach(function(name, index) {
+                let div = document.createElement('div');
+                div.className = 'list-group-item d-flex justify-content-between align-items-center';
+                
+                let upBtn = index > 0 ? `<button class="btn btn-sm btn-light border" onclick="moveSheetItem(${index}, -1)">▲</button>` : `<button class="btn btn-sm btn-light border invisible">▲</button>`;
+                let downBtn = index < allSheetNames.length - 1 ? `<button class="btn btn-sm btn-light border" onclick="moveSheetItem(${index}, 1)">▼</button>` : `<button class="btn btn-sm btn-light border invisible">▼</button>`;
+
+                div.innerHTML = `
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <input class="form-check-input me-3 sheet-manager-checkbox" type="checkbox" value="${name}">
+                        <span class="fw-bold">${name}</span>
+                    </div>
+                    <div class="btn-group">
+                        ${upBtn}
+                        ${downBtn}
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            new bootstrap.Modal(document.getElementById('sheetManagerModal')).show();
+        }
+
+        function moveSheetItem(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= allSheetNames.length) return;
+            const temp = allSheetNames[index];
+            allSheetNames[index] = allSheetNames[newIndex];
+            allSheetNames[newIndex] = temp;
+            openSheetManager(); 
+        }
+
+        function saveReorder() {
+            if(confirm('ยืนยันการจัดลำดับหน้าใหม่?')) {
+                document.getElementById('loading').style.display = 'flex';
+                bootstrap.Modal.getInstance(document.getElementById('sheetManagerModal')).hide();
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) {
+                        alert('บันทึกลำดับเรียบร้อย');
+                        loadSheets();
+                    } else {
+                        alert('เกิดข้อผิดพลาด');
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                }).reorderSheets(allSheetNames);
+            }
+        }
+
+        function confirmBulkDelete() {
+            const selected = Array.from(document.querySelectorAll('.sheet-manager-checkbox:checked')).map(function(cb) { return cb.value; });
+            if(selected.length === 0) return alert('กรุณาเลือกหน้า');
+            if(confirm('ยืนยันลบหน้า?')) {
+                document.getElementById('loading').style.display = 'flex';
+                bootstrap.Modal.getInstance(document.getElementById('sheetManagerModal')).hide();
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { alert('ลบเรียบร้อย'); if(selected.includes(currentSheetName)) currentSheetName = ''; loadSheets(); }
+                    else { alert(res.message); document.getElementById('loading').style.display = 'none'; }
+                }).deleteBulkSheets(selected);
+            }
+        }
+
+        function confirmBulkCopy() {
+            const selected = Array.from(document.querySelectorAll('.sheet-manager-checkbox:checked')).map(function(cb) { return cb.value; });
+            if(selected.length === 0) return alert('กรุณาเลือกหน้า');
+            if(confirm('ยืนยันคัดลอก?')) {
+                document.getElementById('loading').style.display = 'flex';
+                bootstrap.Modal.getInstance(document.getElementById('sheetManagerModal')).hide();
+                google.script.run.withSuccessHandler(function(res) {
+                    if(res.success) { alert('คัดลอกเรียบร้อย'); loadSheets(); }
+                }).duplicateBulkSheets(selected);
+            }
+        }
+        // --------------------------------
+
+        // --- Item Operations ---
+        function openModal(editData = null, isCopy = false) {
+            const modal = new bootstrap.Modal(document.getElementById('entryModal'));
+            document.getElementById('sheetNameInput').value = currentSheetName;
+
+            if (editData) {
+                if(isCopy) { 
+                    document.getElementById('modalTitle').innerText = "บันทึกรายการใหม่ (คัดลอก)"; 
+                    document.getElementById('recId').value = ""; 
+                } else { 
+                    document.getElementById('modalTitle').innerText = "แก้ไขรายการ"; 
+                    document.getElementById('recId').value = editData.id; 
+                }
+                
+                document.getElementById('dateInput').value = editData.date; 
+                document.getElementById('itemInput').value = editData.item;
+                document.getElementById('customerInput').value = editData.customer;
+                document.getElementById('amountInput').value = editData.amount;
+                document.getElementById('vatTypeInput').value = editData.vatType;
+                document.getElementById('hasDocInput').checked = editData.hasDoc; 
+                document.getElementById('remarkInput').value = editData.remark || "";
+                
+                if(editData.type === 'รายรับ') document.getElementById('typeIncome').checked = true;
+                else if(editData.type === 'ค่าแรง') document.getElementById('typeLabor').checked = true;
+                else document.getElementById('typeExpense').checked = true;
+                
+                document.getElementById('hasWhtInput').checked = (editData.whtAmount > 0);
+            } else {
+                document.getElementById('modalTitle').innerText = "สร้างรายการใหม่";
+                document.getElementById('recordForm').reset();
+                document.getElementById('recId').value = "";
+                document.getElementById('sheetNameInput').value = currentSheetName;
+                document.getElementById('dateInput').valueAsDate = new Date();
+                document.getElementById('typeIncome').checked = true;
+            }
+            toggleWhtOption(); calculateWhtPreview(); modal.show();
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            bootstrap.Modal.getInstance(document.getElementById('entryModal')).hide();
+            document.getElementById('loading').style.display = 'flex';
+            // VERCEL ADAPTER will handle FormData conversion
+            google.script.run.withSuccessHandler(onSuccess).saveData(document.getElementById('recordForm'));
+        }
+
+        function editItem(id) {
+            const record = allRecords.find(function(r) { return r.id.toString() === id.toString(); }); if (record) openModal(record);
+        }
+        
+        function copyItem(id) {
+            const record = allRecords.find(function(r) { return r.id.toString() === id.toString(); }); if (record) openModal(record, true);
+        }
+
+        function deleteItem(id) {
+            if(confirm('ยืนยันลบ?')) {
+                document.getElementById('loading').style.display = 'flex';
+                google.script.run.withSuccessHandler(onSuccess).deleteData(id, currentSheetName);
+            }
+        }
+        
+        function deleteSelectedItems() {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            if(checkboxes.length === 0) return;
+            if(confirm('ลบรายการที่เลือก?')) {
+                document.getElementById('loading').style.display = 'flex';
+                const ids = Array.from(checkboxes).map(function(cb) { return cb.value; });
+                google.script.run.withSuccessHandler(function(res) {
+                    document.getElementById('btnBulkDelete').style.display = 'none';
+                    onSuccess(res);
+                }).deleteBulkData(ids, currentSheetName);
+            }
+        }
+
+        function openMoveModal(id) {
+            document.getElementById('moveItemId').value = id;
+            const targetSelect = document.getElementById('targetSheetSelector');
+            targetSelect.innerHTML = '';
+            allSheetNames.forEach(function(name) {
+                if (name !== currentSheetName && name !== '__SUMMARY__') {
+                    let option = document.createElement('option');
+                    option.value = name;
+                    option.text = name;
+                    targetSelect.add(option);
+                }
+            });
+            if (targetSelect.options.length === 0) { alert("ไม่มีหน้าอื่นให้ย้าย"); return; }
+            new bootstrap.Modal(document.getElementById('moveItemModal')).show();
+        }
+
+        function confirmMoveItem() {
+            const id = document.getElementById('moveItemId').value;
+            const targetSheet = document.getElementById('targetSheetSelector').value;
+            if (!targetSheet) return;
+            document.getElementById('loading').style.display = 'flex';
+            bootstrap.Modal.getInstance(document.getElementById('moveItemModal')).hide();
+            google.script.run.withSuccessHandler(function(res) {
+                alert("ย้ายเรียบร้อย");
+                onSuccess(res);
+            }).moveItem(id, currentSheetName, targetSheet);
+        }
+
+        function toggleDoc(id) {
+            google.script.run.withSuccessHandler(onSuccess).toggleDocStatus(id, currentSheetName);
+        }
+
+        function toggleVat(id) {
+            google.script.run.withSuccessHandler(onSuccess).toggleVatStatus(id, currentSheetName);
+        }
+
+        function toggleWhtOption() {
+            const isLabor = document.getElementById('typeLabor').checked;
+            const whtSection = document.getElementById('whtSection');
+            if (isLabor) { whtSection.classList.remove('d-none'); }
+            else { whtSection.classList.add('d-none'); document.getElementById('hasWhtInput').checked = false; }
+            calculateWhtPreview();
+        }
+
+        function calculateWhtPreview() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const hasWht = document.getElementById('hasWhtInput').checked;
+            const isLabor = document.getElementById('typeLabor').checked;
+            const previewBox = document.getElementById('whtPreview');
+            if (isLabor && hasWht && amount > 0) {
+                const wht = amount * 0.03;
+                const net = amount - wht;
+                document.getElementById('previewWhtAmount').innerText = formatMoney(wht);
+                document.getElementById('previewNetPay').innerText = formatMoney(net);
+                previewBox.classList.remove('d-none');
+            } else {
+                previewBox.classList.add('d-none');
+            }
+        }
+        
+        // NEW: Global Filter Logic
+        function filterGlobalData(key, element) {
+            if(key === 'all') {
+                globalActiveFilters.types = []; globalActiveFilters.tax = []; globalActiveFilters.doc = [];
+            } else {
+                let category = null;
+                if(['income', 'expense', 'labor'].includes(key)) category = 'types';
+                else if(['vat', 'novat'].includes(key)) category = 'tax';
+                else if(['doc_received', 'doc_pending'].includes(key)) category = 'doc';
+                
+                if(category) {
+                    const index = globalActiveFilters[category].indexOf(key);
+                    if(index > -1) globalActiveFilters[category].splice(index, 1);
+                    else globalActiveFilters[category].push(key);
+                }
+            }
+            updateGlobalFilterUI(); 
+            searchGlobalTable(); // Trigger search to apply filters
+        }
+
+        function updateGlobalFilterUI() {
+            const hasAny = globalActiveFilters.types.length > 0 || globalActiveFilters.tax.length > 0 || globalActiveFilters.doc.length > 0;
+            const btnAll = document.getElementById('btnGlobalFilterAll');
+            if(btnAll) {
+                if(!hasAny) btnAll.classList.add('active'); else btnAll.classList.remove('active');
+            }
+            
+            const container = document.getElementById('globalSearchCard');
+            if(container) {
+                container.querySelectorAll('.btn-filter').forEach(function(btn) {
+                    const onclickAttr = btn.getAttribute('onclick');
+                    if(onclickAttr && onclickAttr.includes('filterGlobalData')) {
+                        const keyMatch = onclickAttr.match(/'([^']+)'/);
+                        if(keyMatch) {
+                            const key = keyMatch[1];
+                            if(key === 'all') return;
+                            let isActive = false;
+                            if(globalActiveFilters.types.includes(key) || globalActiveFilters.tax.includes(key) || globalActiveFilters.doc.includes(key)) isActive = true;
+                            if(isActive) btn.classList.add('active'); else btn.classList.remove('active');
+                        }
+                    }
+                });
+            }
+        }
+
+        // NEW: Local Filter Logic
+        function filterData(key, element) {
+            if(key === 'all') {
+                activeFilters.types = []; activeFilters.tax = []; activeFilters.doc = [];
+            } else {
+                let category = null;
+                if(['income', 'expense', 'labor'].includes(key)) category = 'types';
+                else if(['vat', 'novat'].includes(key)) category = 'tax';
+                else if(['doc_received', 'doc_pending'].includes(key)) category = 'doc';
+                
+                if(category) {
+                    const index = activeFilters[category].indexOf(key);
+                    if(index > -1) activeFilters[category].splice(index, 1);
+                    else activeFilters[category].push(key);
+                }
+            }
+            updateFilterUI(); 
+            searchTable();
+        }
+        
+        function updateFilterUI() {
+            const hasAny = activeFilters.types.length > 0 || activeFilters.tax.length > 0 || activeFilters.doc.length > 0;
+            const btnAll = document.getElementById('btnFilterAll');
+            if(!hasAny) btnAll.classList.add('active'); else btnAll.classList.remove('active');
+            
+            document.querySelectorAll('#filterSection .btn-filter').forEach(function(btn) {
+                const keyMatch = btn.getAttribute('onclick').match(/'([^']+)'/);
+                if (!keyMatch) return;
+                const key = keyMatch[1];
+                if(key === 'all') return;
+                let isActive = false;
+                if(activeFilters.types.includes(key) || activeFilters.tax.includes(key) || activeFilters.doc.includes(key)) isActive = true;
+                if(isActive) btn.classList.add('active'); else btn.classList.remove('active');
+            });
+        }
+        
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(function(cb) { if (cb.closest('tr').style.display !== 'none') cb.checked = selectAll.checked; });
+            updateDeleteButtonState();
+        }
+        
+        function updateDeleteButtonState() {
+            const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+            const btn = document.getElementById('btnBulkDelete');
+            const counter = document.getElementById('selectedCount');
+            if (checkedCount > 0) { btn.style.display = 'inline-block'; counter.innerText = checkedCount; }
+            else { btn.style.display = 'none'; }
+        }
+        
+        function renderSummaryFilters() {
+            const container = document.getElementById('summarySheetCheckboxes');
+            container.innerHTML = '';
+            allSheetNames.forEach(function(name) {
+                let div = document.createElement('div');
+                div.className = 'form-check form-check-inline bg-white px-3 py-1 rounded border';
+                div.innerHTML = `<input class="form-check-input summary-sheet-check" type="checkbox" value="${name}" checked><label class="form-check-label">${name}</label>`;
+                container.appendChild(div);
+            });
+        }
+        function toggleSummaryCheckboxes(checked) {
+            const checkboxes = document.querySelectorAll('.summary-sheet-check');
+            checkboxes.forEach(function(cb) { cb.checked = checked; });
+        }
+        function calculateCustomSummary() {
+            const checkboxes = document.querySelectorAll('.summary-sheet-check:checked');
+            const selectedSheets = Array.from(checkboxes).map(function(cb) { return cb.value; });
+            if (selectedSheets.length === 0) { alert('กรุณาเลือกอย่างน้อย 1 หน้า'); return; }
+            document.getElementById('loading').style.display = 'flex';
+            google.script.run.withSuccessHandler(onSuccessSummary).getOverallSummary(selectedSheets);
+        }
+        function goToSummary() {
+            const selector = document.getElementById('sheetSelector');
+            selector.value = '__SUMMARY__';
+            changeSheet();
+        }
+        function jumpToSheet(sheetName) {
+            const selector = document.getElementById('sheetSelector');
+            selector.value = sheetName;
+            changeSheet();
+        }
+        
+        function renderGlobalTransactions(records) {
+            const tbody = document.getElementById('globalTableBody');
+            tbody.innerHTML = '';
+            if (records.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">ไม่มีรายการ</td></tr>'; return; }
+            records.forEach(function(rec) {
+                let amountClass = rec.type === 'รายรับ' ? 'text-success' : 'text-danger';
+                let html = `<tr><td class="text-secondary small fw-bold"><i class="bi bi-folder2-open me-1"></i>${rec.sheetName}</td><td class="small">${rec.displayDate}</td><td><div class="fw-bold">${rec.item}</div><div class="small text-muted">${rec.customer || '-'}</div></td><td class="text-end fw-bold ${amountClass}">${formatMoney(rec.amount)}</td><td class="text-center"><button class="btn btn-sm btn-outline-primary" onclick="jumpToSheet('${rec.sheetName}')" title="ไปยังชีทนี้"><i class="bi bi-box-arrow-in-up-right"></i></button></td></tr>`;
+                tbody.innerHTML += html;
+            });
+        }
+
+        // New function to render filtered table for single sheet
+        function renderFilteredTable(filteredData) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            filteredData.forEach(function(rec) {
+                let amountClass = 'text-dark'; let typeBadge = '';
+                if (rec.type === 'รายรับ') { amountClass = 'text-income'; typeBadge = `<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">รับ</span>`; }
+                else if (rec.type === 'ค่าแรง') { amountClass = 'text-labor'; typeBadge = `<span class="badge bg-warning bg-opacity-10 text-dark border border-warning border-opacity-25">ค่าแรง</span>`; }
+                else { amountClass = 'text-expense'; typeBadge = `<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">จ่าย</span>`; }
+                
+                let isVat = rec.vatType !== 'novat';
+                let vatBtnClass = isVat ? 'btn-status-toggle vat-active' : 'btn-status-toggle';
+                let vatBtnText = isVat ? 'VAT 7%' : 'No VAT';
+                let vatButton = `<button id="btn-vat-${rec.id}" class="${vatBtnClass}" onclick="toggleVat('${rec.id}')" title="กดเพื่อเปิด/ปิด VAT">${vatBtnText}</button>`;
+                
+                let docBtnClass = rec.hasDoc ? 'btn-status-toggle doc-received' : 'btn-status-toggle';
+                let docBtnIcon = rec.hasDoc ? '<i class="bi bi-check-circle me-1"></i>รับแล้ว' : '<i class="bi bi-clock me-1"></i>รอ';
+                let docButton = `<button id="btn-doc-${rec.id}" class="${docBtnClass}" onclick="toggleDoc('${rec.id}')" title="กดเพื่อสลับสถานะ">${docBtnIcon}</button>`;
+                
+                let whtDisplay = '';
+                if (rec.whtAmount > 0) whtDisplay = `<div class="mt-1"><span class="badge badge-wht">หัก 3% ${formatMoney(rec.whtAmount)}</span></div>`;
+                let remarkDisplay = '';
+                if (rec.remark) remarkDisplay = `<div class="text-muted small fst-italic mt-1"><i class="bi bi-sticky me-1"></i>${rec.remark}</div>`;
+
+                let html = `
+                    <tr>
+                        <td class="text-center align-middle col-checkbox">
+                            <input type="checkbox" class="form-check-input row-checkbox" value="${rec.id}" onchange="updateDeleteButtonState()">
+                        </td>
+                        <td class="text-secondary small align-middle">${rec.displayDate}</td>
+                        <td>
+                            <div class="fw-bold text-dark">${rec.item}</div>
+                            <div class="small text-muted"><i class="bi bi-person me-1"></i>${rec.customer || '-'}</div>
+                            ${whtDisplay} ${remarkDisplay}
+                        </td>
+                        <td class="align-middle">${typeBadge}</td>
+                        <td class="text-end fw-bold ${amountClass} align-middle">${formatMoney(rec.amount)}</td>
+                        <td class="text-end text-muted small align-middle">${formatMoney(rec.vatAmount)}</td>
+                        <td class="text-center align-middle">${vatButton}</td>
+                        <td class="text-center align-middle">${docButton}</td>
+                        <td class="text-center align-middle col-manage">
+                            <button class="btn btn-sm btn-outline-dark border-0 me-1" onclick="openMoveModal('${rec.id}')" title="ย้าย"><i class="bi bi-box-arrow-right"></i></button>
+                            <button class="btn btn-sm btn-outline-info border-0 me-1" onclick="copyItem('${rec.id}')" title="คัดลอก"><i class="bi bi-files"></i></button>
+                            <button class="btn btn-sm btn-outline-secondary border-0 me-1" onclick="editItem('${rec.id}')" title="แก้ไข"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteItem('${rec.id}')" title="ลบ"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += html;
+            });
+        }
+
+        function renderBreakdownTable() { 
+            const thead = document.getElementById('tableHeader'); 
+            const tbody = document.getElementById('tableBody'); 
+            // In Breakdown table, we don't have Checkbox column, so no 'col-checkbox' class on first TH
+            thead.innerHTML = `<tr><th>ชื่อหน้า (Sheet)</th><th class="text-end text-success">รายรับรวม</th><th class="text-end text-danger">รายจ่ายรวม</th><th class="text-end text-primary">กำไรขั้นต้น</th></tr>`; 
+            tbody.innerHTML = ''; 
+            if(breakdownData.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5">ไม่มีข้อมูล</td></tr>'; return; } 
+            breakdownData.forEach(function(row) { 
+                let profitClass = row.profit >= 0 ? 'text-success' : 'text-danger'; 
+                let html = `<tr><td class="fw-bold"><i class="bi bi-folder2-open me-2 text-secondary"></i>${row.name}</td><td class="text-end">${formatMoney(row.income)}</td><td class="text-end">${formatMoney(row.expense)}</td><td class="text-end fw-bold ${profitClass}">${formatMoney(row.profit)}</td></tr>`; 
+                tbody.innerHTML += html; 
+            }); 
+        }
+        
+        // ปรับปรุงฟังก์ชัน renderTable ให้หัวข้อชัดเจนตามที่ต้องการ
+        function renderTable() {
+            const thead = document.getElementById('tableHeader');
+            const tbody = document.getElementById('tableBody');
+            thead.innerHTML = `
+                <tr>
+                    <th style="width: 50px;" class="text-center col-checkbox">
+                        <div class="form-check d-flex justify-content-center">
+                            <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleSelectAll()" title="เลือกทั้งหมด">
+                        </div>
+                    </th>
+                    <th>วันที่</th>
+                    <th>รายการ</th>
+                    <th>ประเภท</th>
+                    <th class="text-end">จำนวนเงิน</th>
+                    <th class="text-end">มูลค่า VAT</th>
+                    <th class="text-center">VAT</th>
+                    <th class="text-center">เอกสาร</th>
+                    <th class="text-center col-manage" style="width: 140px;">จัดการ</th>
+                </tr>`;
+            tbody.innerHTML = '';
+            // Trigger search to filter and render
+            searchTable();
+        }
+
+        function renderSummary(sum) {
+            document.getElementById('sumIncome').innerText = formatMoney(sum.income);
+            document.getElementById('sumExpense').innerText = formatMoney(sum.expense);
+            document.getElementById('sumProfit').innerText = formatMoney(sum.profit);
+            const pEl = document.getElementById('sumProfit');
+            pEl.className = sum.profit >= 0 ? "stat-value h5 mb-0 text-success" : "stat-value h5 mb-0 text-danger";
+            
+            let totalTax = sum.netVat + sum.totalWht;
+            document.getElementById('sumTotalTax').innerText = formatMoney(totalTax);
+            document.getElementById('sumNetVat').innerText = formatMoney(sum.netVat);
+            document.getElementById('sumVatSell').innerText = formatMoney(sum.vatSell);
+            document.getElementById('sumVatBuy').innerText = formatMoney(sum.vatBuy);
+            document.getElementById('countDocReceived').innerText = sum.docReceived;
+            document.getElementById('countDocPending').innerText = sum.docPending;
+            document.getElementById('sumTotalWht').innerText = formatMoney(sum.totalWht);
+        }
+
+        function formatMoney(num) {
+            return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    </script>
+</body>
+</html>
